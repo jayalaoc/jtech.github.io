@@ -1,14 +1,854 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Josue | Data Professional </title>
-    <script type="module" crossorigin src="/assets/index-BK-oeNbl.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CpojzuvK.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Josue Ayala — Data Specialist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --red-vivid:  #C0392B;
+      --red-deep:   #8B1A1A;
+      --red-lo-d:   rgba(192,57,43,0.12);
+      --red-lo-l:   rgba(139,26,26,0.08);
+      --beige:      #F5F0E8;
+      --beige-dark: #EAE3D6;
+    }
+
+    [data-theme="dark"] {
+      --bg:       #0A0A0A;
+      --surface:  #141414;
+      --border:   #242424;
+      --text:     #EDEDED;
+      --muted:    #A0A0A0;
+      --faint:    #2E2E2E;
+      --accent:   #C0392B;
+      --accent2:  #E05C4B;
+      --accent-lo: var(--red-lo-d);
+      --nav-bg:   rgba(10,10,10,0.96);
+      --badge-bg: #1E1010;
+      --badge-c:  #C0392B;
+    }
+
+    [data-theme="light"] {
+      --bg:       #F5F0E8;
+      --surface:  #FFFFFF;
+      --border:   #D9D0C0;
+      --text:     #111111;
+      --muted:    #3D3020;
+      --faint:    #EAE3D6;
+      --accent:   #8B1A1A;
+      --accent2:  #C0392B;
+      --accent-lo: var(--red-lo-l);
+      --nav-bg:   rgba(245,240,232,0.97);
+      --badge-bg: #F0E8E8;
+      --badge-c:  #8B1A1A;
+    }
+
+    /* ── RESET ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ── THEME TOGGLE ───────────────────────────────────── */
+    .theme-toggle {
+      position: fixed;
+      top: 1.2rem;
+      right: 1.5rem;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.38rem 0.75rem;
+      border-radius: 2px;
+      transition: border-color 0.2s, color 0.2s, background 0.3s;
+      user-select: none;
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .toggle-track {
+      width: 26px; height: 13px;
+      background: var(--faint);
+      border-radius: 7px;
+      position: relative;
+      transition: background 0.3s;
+    }
+    [data-theme="light"] .toggle-track { background: var(--accent); }
+    .toggle-thumb {
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--muted);
+      transition: transform 0.3s, background 0.3s;
+    }
+    [data-theme="light"] .toggle-thumb { transform: translateX(13px); background: #fff; }
+
+    /* ── LAYOUT ─────────────────────────────────────────── */
+    .layout { display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; }
+
+    /* ── SIDE NAV ───────────────────────────────────────── */
+    .sidenav {
+      position: fixed;
+      top: 0; left: 0;
+      width: 200px; height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2rem;
+      border-right: 1px solid var(--border);
+      z-index: 100;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .sidenav-brand {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 2.75rem;
+      line-height: 1.6;
+    }
+    .sidenav-brand strong { display: block; color: var(--accent); font-size: 0.6rem; margin-top: 0.2rem; font-weight: 400; }
+    .nav-links { display: flex; flex-direction: column; gap: 0.15rem; }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.73rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      padding: 0.38rem 0;
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .nav-link::before {
+      content: '';
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--text); }
+    .nav-link:hover::before, .nav-link.active::before { background: var(--accent); transform: scale(1.8); }
+    .sidenav-footer {
+      margin-top: auto;
+      padding-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .social-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+    }
+    .social-link:hover { color: var(--accent); }
+
+    /* ── MAIN ───────────────────────────────────────────── */
+    .main { grid-column: 2; padding: 0 4rem; max-width: 880px; }
+
+    /* ── SECTIONS ───────────────────────────────────────── */
+    section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 6rem 0; }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    #hero { padding-top: 0; min-height: 100vh; justify-content: center; }
+    .hero-prompt {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      min-height: 1.4em;
+    }
+    .hero-prompt-prefix { color: var(--accent); }
+    .cursor {
+      display: inline-block;
+      width: 7px; height: 1em;
+      background: var(--accent);
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+      border-radius: 1px;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .hero-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(3.2rem, 7vw, 6rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+    }
+    .hero-name em { font-style: normal; color: var(--accent); }
+    .hero-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 1.25rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .hero-desc {
+      margin-top: 2rem;
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 480px;
+      font-weight: 400;
+      line-height: 1.85;
+    }
+    .hero-desc strong { color: var(--text); font-weight: 500; }
+    .hero-cta { display: flex; gap: 1rem; margin-top: 3rem; flex-wrap: wrap; }
+    .btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 0.72rem 1.6rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      text-transform: uppercase;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-ghost { border-color: var(--border); color: var(--muted); background: transparent; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+
+    /* ── ABOUT ──────────────────────────────────────────── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 2.5rem; align-items: start; }
+    .about-body { font-size: 1rem; color: var(--muted); line-height: 1.95; font-weight: 400; }
+    .about-body p + p { margin-top: 1rem; }
+    .about-body strong { color: var(--text); font-weight: 500; }
+    .about-stats { display: flex; flex-direction: column; gap: 1.75rem; }
+    .stat { border-left: 2px solid var(--accent); padding-left: 1.25rem; }
+    .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; color: var(--text); line-height: 1; letter-spacing: -0.02em; }
+    .stat-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-top: 0.3rem; letter-spacing: 0.05em; }
+
+    /* ── SKILLS ─────────────────────────────────────────── */
+    .skills-typewriter {
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem;
+      color: var(--text);
+      min-height: 1.5em;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+    .skills-typewriter-prefix { color: var(--accent2); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--border);
+      background: var(--border);
+    }
+    .skill-group { padding: 1.5rem; background: var(--surface); transition: background 0.2s; }
+    .skill-group:hover { background: var(--accent-lo); }
+    .skill-group-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .skill-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.66rem;
+      color: var(--muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      transition: all 0.15s;
+    }
+    .skill-tag:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-lo); }
+
+    /* ── EXPERIENCE ─────────────────────────────────────── */
+    .exp-timeline { margin-top: 2.5rem; }
+    .exp-item { display: grid; grid-template-columns: 120px 1fr; gap: 2rem; padding: 2.5rem 0; border-top: 1px solid var(--border); }
+    .exp-item:last-child { border-bottom: 1px solid var(--border); }
+    .exp-date { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); letter-spacing: 0.04em; padding-top: 0.25rem; line-height: 1.7; }
+    .exp-role { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 600; color: var(--text); }
+    .exp-company { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--accent); margin-top: 0.25rem; letter-spacing: 0.04em; }
+    .exp-points { margin-top: 1.1rem; display: flex; flex-direction: column; gap: 0.65rem; }
+    .exp-point {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 400;
+      line-height: 1.78;
+      padding-left: 1rem;
+      position: relative;
+    }
+    .exp-point::before { content: '—'; position: absolute; left: 0; color: var(--accent); font-family: 'DM Mono', monospace; }
+
+    /* ── PROJECTS ───────────────────────────────────────── */
+    .projects-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.73rem;
+      color: var(--muted);
+      border-left: 2px solid var(--border);
+      padding-left: 0.9rem;
+      margin-top: 1.5rem;
+      line-height: 1.75;
+    }
+    .projects-note em { color: var(--accent); font-style: normal; }
+    .projects-grid { margin-top: 1.75rem; display: flex; flex-direction: column; gap: 1px; border: 1px solid var(--border); background: var(--border); }
+    .project-card { background: var(--surface); padding: 2rem; display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: start; transition: background 0.2s; }
+    .project-card:hover { background: var(--accent-lo); }
+    .project-num { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--accent2); margin-bottom: 0.5rem; letter-spacing: 0.12em; }
+    .project-name { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600; color: var(--text); }
+    .project-desc { font-size: 0.93rem; color: var(--muted); margin-top: 0.5rem; font-weight: 400; line-height: 1.78; max-width: 560px; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+    .project-tag { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--accent); background: var(--accent-lo); padding: 0.2rem 0.55rem; border-radius: 2px; letter-spacing: 0.04em; }
+    .project-badge { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--badge-c); background: var(--badge-bg); border: 1px solid var(--accent-lo); padding: 0.2rem 0.6rem; border-radius: 2px; white-space: nowrap; margin-top: 0.2rem; letter-spacing: 0.06em; }
+
+    /* ── EDUCATION ──────────────────────────────────────── */
+    .edu-card { margin-top: 2.5rem; border: 1px solid var(--border); padding: 2.5rem; background: var(--surface); transition: background 0.3s, border-color 0.3s; }
+    .edu-school { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .edu-degree { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 600; color: var(--text); line-height: 1.45; }
+    .edu-meta { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; }
+    .edu-desc { margin-top: 1.25rem; font-size: 0.93rem; color: var(--muted); font-weight: 400; line-height: 1.88; }
+    .edu-courses { margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .edu-course { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); border: 1px solid var(--border); padding: 0.2rem 0.6rem; border-radius: 2px; }
+
+    /* ── CONTACT ────────────────────────────────────────── */
+    .contact-intro { font-size: 1rem; color: var(--muted); max-width: 460px; font-weight: 400; line-height: 1.88; margin-top: 1.5rem; }
+    .contact-form { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.25rem; max-width: 500px; }
+    .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .form-input, .form-textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.8rem 1rem;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.2s, background 0.3s;
+      width: 100%;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 120px; }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--faint); }
+    .contact-links { margin-top: 3rem; display: flex; gap: 2rem; flex-wrap: wrap; }
+    .contact-link { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
+    .contact-link:hover { color: var(--accent); }
+    .contact-link::before { content: '↗'; color: var(--accent); }
+
+    /* ── SCROLL REVEAL ──────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── MOBILE ─────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidenav {
+        position: fixed; width: 100%; height: auto;
+        flex-direction: row; align-items: center; justify-content: space-between;
+        padding: 0.9rem 1.5rem;
+        border-right: none; border-bottom: 1px solid var(--border);
+        top: 0; left: 0;
+      }
+      .sidenav-brand { margin-bottom: 0; }
+      .nav-links { flex-direction: row; gap: 0.9rem; }
+      .nav-link { font-size: 0.6rem; gap: 0.3rem; }
+      .nav-link::before { width: 3px; height: 3px; }
+      .sidenav-footer { display: none; }
+      .main { grid-column: 1; padding: 5rem 1.5rem 3rem; }
+      section { min-height: auto; padding: 4rem 0; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+      .hero-name { font-size: 2.8rem; }
+      .theme-toggle { top: auto; bottom: 1.2rem; right: 1.5rem; }
+    }
+    @media (max-width: 480px) { .nav-link span { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- THEME TOGGLE -->
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+  <span id="theme-label">DARK</span>
+</button>
+
+<div class="layout">
+
+  <!-- SIDE NAV -->
+  <nav class="sidenav">
+    <div class="sidenav-brand">JA<strong>Data Specialist</strong></div>
+    <ul class="nav-links">
+      <li><a class="nav-link active" href="#hero"       onclick="setActive(this)"><span>Home</span></a></li>
+      <li><a class="nav-link"        href="#about"      onclick="setActive(this)"><span>About</span></a></li>
+      <li><a class="nav-link"        href="#skills"     onclick="setActive(this)"><span>Skills</span></a></li>
+      <li><a class="nav-link"        href="#experience" onclick="setActive(this)"><span>Experience</span></a></li>
+      <li><a class="nav-link"        href="#projects"   onclick="setActive(this)"><span>Projects</span></a></li>
+      <li><a class="nav-link"        href="#education"  onclick="setActive(this)"><span>Education</span></a></li>
+      <li><a class="nav-link"        href="#contact"    onclick="setActive(this)"><span>Contact</span></a></li>
+    </ul>
+    <div class="sidenav-footer">
+      <a class="social-link" href="mailto:jayalaoc@gmail.com">jayalaoc@gmail.com</a>
+      <a class="social-link" href="https://linkedin.com/in/josue-ayala-oc" target="_blank">LinkedIn ↗</a>
+      <a class="social-link" href="https://github.com/jayalaoc" target="_blank">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-prompt">
+        <span class="hero-prompt-prefix">&gt;&nbsp;</span>
+        <span id="hero-typed"></span>
+        <span class="cursor"></span>
+      </div>
+      <h1 class="hero-name">Josue<br/><em>Ayala</em></h1>
+      <p class="hero-title">Data Specialist &nbsp;·&nbsp; San Diego, CA</p>
+      <p class="hero-desc">
+        I architect <strong>reliable data systems</strong> — from raw ingestion to validated
+        gold-layer models — so that the dashboards, reports, and decisions built on top of
+        them can actually be trusted.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#experience">View My Work</a>
+        <a class="btn btn-ghost"   href="#contact">Get In Touch</a>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <p class="section-label reveal">// about</p>
+      <div class="about-grid">
+        <div class="about-body reveal">
+          <p>
+            Data Specialist with <strong>5+ years of experience</strong> engineering reliable
+            pipelines, validated data models, and executive-level reporting across supply chain
+            logistics, behavioral health analytics, and international supply chain certification data.
+          </p>
+          <p>
+            My work lives at the intersection of <strong>data engineering and analytics</strong> —
+            I design the ETL architecture, audit semantic layers for correctness, and build the
+            Power BI models that leadership uses to make high-stakes operational decisions. I don't
+            just surface numbers; I validate the infrastructure behind them.
+          </p>
+          <p>
+            I've guided cross-functional teams and international collaborators through complex
+            tooling adoption, and built geospatial systems that directly reduced supply shortages
+            and improved service delivery across county operations. Bilingual in English and Spanish.
+          </p>
+        </div>
+        <div class="about-stats reveal">
+          <div class="stat"><div class="stat-num">5+</div><div class="stat-label">Years in data engineering & analytics</div></div>
+          <div class="stat"><div class="stat-num">3</div><div class="stat-label">Industry domains</div></div>
+          <div class="stat"><div class="stat-num">EN/ES</div><div class="stat-label">Bilingual</div></div>
+          <div class="stat"><div class="stat-num">UCSD</div><div class="stat-label">B.S. Cognitive Science · ML</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <p class="section-label reveal">// skills</p>
+      <div class="skills-typewriter reveal">
+        <span class="skills-typewriter-prefix">proficient_in(</span>
+        <span id="skills-typed"></span>
+        <span class="cursor"></span>
+        <span class="skills-typewriter-prefix">)</span>
+      </div>
+      <div class="skills-grid reveal">
+        <div class="skill-group">
+          <p class="skill-group-label">Analytics & BI</p>
+          <div class="skill-tags">
+            <span class="skill-tag">Power BI</span>
+            <span class="skill-tag">DAX</span>
+            <span class="skill-tag">Power Query / M</span>
+            <span class="skill-tag">Excel</span>
+            <span class="skill-tag">VBA</span>
+            <span class="skill-tag">Predictive Analytics</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <p class="skill-group-label">Data Engineering</p>
+          <div class="skill-tags">
+            <span class="skill-tag">SQL Server</span>
+            <span class="skill-tag">T-SQL</span>
+            <span class="skill-tag">Dynamic SQL</span>
+            <span class="skill-tag">MySQL</span>
+            <span class="skill-tag">Microsoft Fabric</span>
+            <span class="skill-tag">Lakehouse</span>
+            <span class="skill-tag">Apache Spark</span>
+            <span class="skill-tag">ETL Design</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <p class="skill-group-label">Programming</p>
+          <div class="skill-tags">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Pandas</span>
+            <span class="skill-tag">Keras</span>
+            <span class="skill-tag">TensorFlow</span>
+            <span class="skill-tag">Seaborn</span>
+            <span class="skill-tag">Matplotlib</span>
+            <span class="skill-tag">pyodbc</span>
+            <span class="skill-tag">R</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <p class="skill-group-label">Validation & Audit</p>
+          <div class="skill-tags">
+            <span class="skill-tag">Data Migration Validation</span>
+            <span class="skill-tag">Schema Auditing</span>
+            <span class="skill-tag">Fill Rate Analysis</span>
+            <span class="skill-tag">Source-to-Target Lineage</span>
+            <span class="skill-tag">Data Cleaning & Matching</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <p class="skill-group-label">Geospatial & Domain</p>
+          <div class="skill-tags">
+            <span class="skill-tag">QGIS</span>
+            <span class="skill-tag">GIS Mapping</span>
+            <span class="skill-tag">Orthomosaic Mapping</span>
+            <span class="skill-tag">Supply Chain & Logistics</span>
+            <span class="skill-tag">Behavioral Health Data</span>
+            <span class="skill-tag">Financial Data Analysis</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <p class="skill-group-label">Web & Tools (Hobby)</p>
+          <div class="skill-tags">
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Next.js</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">HTML / CSS</span>
+            <span class="skill-tag">WordPress / PHP</span>
+            <span class="skill-tag">Blender</span>
+            <span class="skill-tag">Office 365</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <p class="section-label reveal">// experience</p>
+      <div class="exp-timeline">
+        <div class="exp-item reveal">
+          <div class="exp-date">Feb 2021<br/>— Present</div>
+          <div>
+            <p class="exp-role">Data Specialist</p>
+            <p class="exp-company">County of San Diego — Behavioral Health Services</p>
+            <ul class="exp-points">
+              <li class="exp-point">Architect and maintain end-to-end data integration pipelines for Mental Health and Substance Use Disorder programs, consolidating multi-source operational data into Microsoft Fabric (Lakehouse / Apache Spark) and cloud environments for centralized, scalable analysis.</li>
+              <li class="exp-point">Design and maintain production Power BI dashboards powered by advanced DAX measures, calculated columns, and Power Query (M) transformations — providing county leadership with continuously updated, executive-level reporting across program performance and financial metrics.</li>
+              <li class="exp-point">Lead data migration validation and semantic layer auditing initiatives: performing schema comparisons, column-level fill rate profiling, and end-to-end source-to-target lineage reviews to guarantee accuracy and completeness across system migrations.</li>
+              <li class="exp-point">Author and optimize complex T-SQL queries for high-complexity data requests — including row-level deduplication, NULL-safe cross-source comparisons, dynamic SQL profiling scripts, and reconciliation across large-scale, multi-schema datasets.</li>
+              <li class="exp-point">Apply Python (Pandas, Keras, TensorFlow, Seaborn, Matplotlib) and VBA-based Excel automation to accelerate data cleaning, validation, and exploratory analysis workflows across healthcare, financial, and global supply chain certification datasets.</li>
+              <li class="exp-point">Develop streamlined data extraction pipelines using Microsoft Forms and automated workflows to track medical supply inventory in real time across multiple county facilities — integrating forecasting models and GIS mapping to proactively reduce shortages, lower procurement costs, and improve operational service turnaround.</li>
+              <li class="exp-point">Provide technical instruction and tooling guidance to internal cross-functional teams and international collaborators (including Malaysia-based partners), driving adoption of standardized validation methodologies and complex analytics infrastructure.</li>
+              <li class="exp-point">Delivered measurable improvements in county service delivery through optimized supply chain visualization and reporting tools — directly contributing to reduced client wait times and improved satisfaction outcomes across county programs.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <p class="section-label reveal">// projects</p>
+      <p class="projects-note reveal">
+        All projects below represent production work delivered in professional settings.
+        Source code and underlying data are <em>company property</em> and cannot be shared
+        publicly — descriptions detail scope, methodology, and measurable impact.
+      </p>
+      <div class="projects-grid reveal">
+
+        <div class="project-card">
+          <div>
+            <p class="project-num">01</p>
+            <p class="project-name">Multi-Layer Data Audit & Validation Pipeline</p>
+            <p class="project-desc">Python-orchestrated, SQL-heavy pipeline performing three-layer validation between semantic/source tables and gold-layer targets in Azure SQL Server via Microsoft Fabric. Layers cover schema metadata comparison, column-level statistics and fill rate profiling, and hash-based row-level mismatch detection using dynamic T-SQL with WHILE loop iteration — pushing all heavy computation into SQL Server and returning only mismatch counts and sampled rows to Python.</p>
+            <div class="project-tags">
+              <span class="project-tag">Python</span>
+              <span class="project-tag">T-SQL / Dynamic SQL</span>
+              <span class="project-tag">Microsoft Fabric</span>
+              <span class="project-tag">Azure SQL Server</span>
+              <span class="project-tag">pyodbc</span>
+              <span class="project-tag">SQLAlchemy</span>
+            </div>
+          </div>
+          <span class="project-badge">Proprietary</span>
+        </div>
+
+        <div class="project-card">
+          <div>
+            <p class="project-num">02</p>
+            <p class="project-name">Supply Chain Certification Power BI Data Model</p>
+            <p class="project-desc">Production Power BI model for Textile Exchange international supply chain certification data. Covers multi-CB/CO certification logic with SWITCH(TRUE()) DAX branching, multi-select slicer compatibility via CONTAINSROW(), farm count deduplication using Record_Add_Flag and Anniversary/New classification columns, and a TC Gold Model audit spanning a 4-level hierarchy: TC identity → transaction certificates → shipments → products, components, and input TCs.</p>
+            <div class="project-tags">
+              <span class="project-tag">Power BI</span>
+              <span class="project-tag">DAX</span>
+              <span class="project-tag">Power Query / M</span>
+              <span class="project-tag">SQL Server</span>
+              <span class="project-tag">Textile Exchange</span>
+            </div>
+          </div>
+          <span class="project-badge">Proprietary</span>
+        </div>
+
+        <div class="project-card">
+          <div>
+            <p class="project-num">03</p>
+            <p class="project-name">Behavioral Health Executive Reporting Suite</p>
+            <p class="project-desc">Suite of Power BI dashboards serving Mental Health and Substance Use Disorder program leadership — including a CAD Dashboard, Sheriff Crosswalk, and 837/835 claims reconciliation dashboard. Features custom fiscal year DAX logic, SmartCare program ID parsing via Power Query List.Generate with comma-delimited multi-ID validation, and automated Parquet file consolidation across custom fiscal year quarters using pyarrow and Python orchestration.</p>
+            <div class="project-tags">
+              <span class="project-tag">Power BI</span>
+              <span class="project-tag">DAX</span>
+              <span class="project-tag">Python / pyarrow</span>
+              <span class="project-tag">SmartCare</span>
+              <span class="project-tag">Healthcare Claims Data</span>
+            </div>
+          </div>
+          <span class="project-badge">Proprietary</span>
+        </div>
+
+        <div class="project-card">
+          <div>
+            <p class="project-num">04</p>
+            <p class="project-name">SQL Server → Cosmos DB Migration Validation</p>
+            <p class="project-desc">Vendor-coordinated migration validation framework for a dTrackit SQL Server to Cosmos DB migration with Wavicle. Designed acceptance criteria covering hash-based record reconciliation, ghost key and orphan record detection, STRING_AGG standard code aggregation CTEs, Record_Add_Flag integrity checks, partition key alignment, CDC verification, and Cosmos DB configuration review — validated across PROD and GOLD environments prior to a hard May 2026 cutover deadline.</p>
+            <div class="project-tags">
+              <span class="project-tag">SQL Server</span>
+              <span class="project-tag">Cosmos DB</span>
+              <span class="project-tag">Data Migration</span>
+              <span class="project-tag">T-SQL CTEs</span>
+              <span class="project-tag">CDC</span>
+              <span class="project-tag">Reconciliation</span>
+            </div>
+          </div>
+          <span class="project-badge">Proprietary</span>
+        </div>
+
+        <div class="project-card">
+          <div>
+            <p class="project-num">05</p>
+            <p class="project-name">Supply Chain GIS & Inventory Mapping System</p>
+            <p class="project-desc">QGIS-based orthomosaic mapping system engineered to track real-time medical supply inventory across multiple county facilities. Integrated geospatial forecasting models with Microsoft Forms-based data extraction pipelines and Power BI reporting — directly reducing supply shortages, lowering procurement costs, and improving service turnaround times for county operations during a critical logistics period.</p>
+            <div class="project-tags">
+              <span class="project-tag">QGIS</span>
+              <span class="project-tag">Orthomosaic Mapping</span>
+              <span class="project-tag">Power BI</span>
+              <span class="project-tag">Microsoft Forms</span>
+              <span class="project-tag">Geospatial Forecasting</span>
+            </div>
+          </div>
+          <span class="project-badge">Proprietary</span>
+        </div>
+
+        <div class="project-card">
+          <div>
+            <p class="project-num">06</p>
+            <p class="project-name">Portfolio Website</p>
+            <p class="project-desc">This site — a single self-contained HTML file with zero runtime dependencies and no build step. Space Grotesk + DM Mono type system, dual typewriter effects, dark/light theme toggle with localStorage persistence, scroll-triggered reveals via IntersectionObserver, and a mailto contact form. Deploys directly to GitHub Pages.</p>
+            <div class="project-tags">
+              <span class="project-tag">HTML</span>
+              <span class="project-tag">CSS Custom Properties</span>
+              <span class="project-tag">Vanilla JS</span>
+              <span class="project-tag">GitHub Pages</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem">
+            <span class="project-badge">Open</span>
+            <a href="https://github.com/jayalaoc/jayalaoc.github.io" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--accent)">↗ GitHub</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education">
+      <p class="section-label reveal">// education</p>
+      <div class="edu-card reveal">
+        <p class="edu-school">University of California San Diego</p>
+        <p class="edu-degree">B.S. Cognitive Science<br/>Specialization in Machine Learning &amp; Neural Computation<br/>Minor in Economics</p>
+        <p class="edu-meta">2016 – 2020</p>
+        <p class="edu-desc">
+          Grounded in computational and mathematical approaches to modeling cognition,
+          theoretical neuroscience, and software engineering — with advanced study in
+          neural networks, artificial intelligence, signal processing, and data science.
+          The economics minor added a systems-level lens for understanding incentive
+          structures, capital allocation, and quantitative market behavior.
+        </p>
+        <div class="edu-courses">
+          <span class="edu-course">Data Science</span>
+          <span class="edu-course">Machine Learning</span>
+          <span class="edu-course">Deep Learning</span>
+          <span class="edu-course">Neural Computations</span>
+          <span class="edu-course">Signal Processing</span>
+          <span class="edu-course">Descriptive Statistics & Distributions</span>
+          <span class="edu-course">Microeconomics</span>
+          <span class="edu-course">Macroeconomics</span>
+          <span class="edu-course">Systems Science: Economics</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <p class="section-label reveal">// contact</p>
+      <p class="contact-intro reveal">Interested in working together or want to know more about my work? Send a message and I'll get back to you.</p>
+      <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+        <div class="form-field">
+          <label class="form-label" for="c-name">Name</label>
+          <input class="form-input" type="text" id="c-name" name="name" placeholder="Your name" required />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="c-email">Email</label>
+          <input class="form-input" type="email" id="c-email" name="email" placeholder="your@email.com" required />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="c-message">Message</label>
+          <textarea class="form-textarea" id="c-message" name="message" placeholder="What's on your mind?" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" id="submit-btn" style="width:fit-content">Send Message</button>
+      </form>
+      <div class="contact-links reveal">
+        <a class="contact-link" href="mailto:jayalaoc@gmail.com">jayalaoc@gmail.com</a>
+        <a class="contact-link" href="https://linkedin.com/in/josue-ayala-oc" target="_blank">LinkedIn</a>
+        <a class="contact-link" href="https://github.com/jayalaoc" target="_blank">GitHub</a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  /* ── THEME ── */
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-label').textContent = next.toUpperCase();
+    localStorage.setItem('theme', next);
+  }
+  (function() {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+      document.getElementById('theme-label').textContent = saved.toUpperCase();
+    }
+  })();
+
+  /* ── TYPEWRITER ── */
+  function makeTypewriter(id, phrases, speed) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    speed = Object.assign({ type: 72, del: 36, pause: 1800 }, speed);
+    let pi = 0, ci = 0, del = false;
+    function tick() {
+      const p = phrases[pi];
+      if (!del) {
+        el.textContent = p.slice(0, ++ci);
+        if (ci === p.length) { del = true; setTimeout(tick, speed.pause); return; }
+      } else {
+        el.textContent = p.slice(0, --ci);
+        if (ci === 0) { del = false; pi = (pi + 1) % phrases.length; }
+      }
+      setTimeout(tick, del ? speed.del : speed.type);
+    }
+    tick();
+  }
+
+  makeTypewriter('hero-typed', [
+    'SELECT * FROM insights',
+    'pipeline.validate(gold_layer)',
+    'pd.merge(source, target)',
+    'dashboard.deploy(exec_report)',
+    'audit.schema(semantic_layer)',
+    'HASHBYTES("SHA2_256", row)',
+  ]);
+
+  makeTypewriter('skills-typed', [
+    '"Power BI"', '"SQL Server"', '"Python"', '"Microsoft Fabric"',
+    '"DAX"', '"QGIS"', '"Pandas"', '"T-SQL"', '"Apache Spark"', '"Power Query"',
+  ], { type: 58, del: 28, pause: 1100 });
+
+  /* ── SCROLL REVEAL ── */
+  const ro = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+  /* ── SCROLL SPY ── */
+  function setActive(link) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+  }
+  const so = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting)
+        document.querySelectorAll('.nav-link').forEach(l =>
+          l.classList.toggle('active', l.getAttribute('href') === `#${e.target.id}`));
+    });
+  }, { threshold: 0.35 });
+  ['hero','about','skills','experience','projects','education','contact']
+    .forEach(id => { const el = document.getElementById(id); if (el) so.observe(el); });
+
+  /* ── CONTACT ── */
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const name = document.getElementById('c-name').value;
+    const email = document.getElementById('c-email').value;
+    const msg = document.getElementById('c-message').value;
+    window.location.href = `mailto:jayalaoc@gmail.com?subject=Portfolio Contact from ${encodeURIComponent(name)}&body=${encodeURIComponent(`From: ${name}\nEmail: ${email}\n\n${msg}`)}`;
+    btn.textContent = 'Sent ✓';
+    btn.style.background = 'var(--red-deep)';
+    setTimeout(() => { btn.textContent = 'Send Message'; btn.style.background = ''; e.target.reset(); }, 3000);
+  }
+</script>
+</body>
 </html>
